@@ -100,13 +100,15 @@ class Timer:
                 self.window.update()
                 self.play_alarm()
             else:
+                if self.input_minutes <= 0 < self.input_hours:
+                    self.input_hours -= 1
+                    self.input_minutes = 60
+
                 if self.input_seconds <= 0 < self.input_minutes:
                     self.input_minutes -= 1
                     self.input_seconds = 59
 
-                if self.input_minutes <= 0 < self.input_hours:
-                    self.input_hours -= 1
-                    self.input_minutes = 59
+
 
                 self.set_time(self.input_hours, self.input_minutes, self.input_seconds)
                 self.window.update()
