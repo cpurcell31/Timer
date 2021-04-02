@@ -1,6 +1,7 @@
 import tkinter as tk
 import math
 
+
 class Timer:
     def __init__(self):
         self.window = tk.Tk()
@@ -17,6 +18,7 @@ class Timer:
         self.memory_seconds = 0
 
         self.timer_running = False
+        self.resume = False
         self._task = None
 
         self.timer_hours_entry = tk.Entry(
@@ -25,18 +27,23 @@ class Timer:
             width=2,
             font="Helvetica 44 bold"
         )
+        self.timer_hours_entry.bind("<KeyPress>", lambda x: self.handle_data_entry())
+
         self.timer_minutes_entry = tk.Entry(
             master=self.window,
             textvariable=self.minutes,
             width=2,
             font="Helvetica 44 bold"
         )
+        self.timer_minutes_entry.bind("<KeyPress>", lambda x: self.handle_data_entry())
+
         self.timer_seconds_entry = tk.Entry(
             master=self.window,
             textvariable=self.seconds,
             width=2,
             font="Helvetica 44 bold"
         )
+        self.timer_seconds_entry.bind("<KeyPress>", lambda x: self.handle_data_entry())
 
         self.hours.set("00")
         self.minutes.set("00")
@@ -86,20 +93,22 @@ class Timer:
                 self.hours.set("00")
                 self.minutes.set("00")
                 self.seconds.set("00")
+
                 self.timer_running = False
+                self.resume = False
+
                 self.window.update()
-                # play sound?
+                self.play_alarm()
             else:
                 if self.input_seconds <= 0 < self.input_minutes:
                     self.input_minutes -= 1
-                    input_seconds = 59
+                    self.input_seconds = 59
+
                 if self.input_minutes <= 0 < self.input_hours:
                     self.input_hours -= 1
                     self.input_minutes = 59
 
-                self.hours.set(self.input_hours)
-                self.minutes.set(self.input_minutes)
-                self.seconds.set(self.input_seconds)
+                self.set_time(self.input_hours, self.input_minutes, self.input_seconds)
                 self.window.update()
                 self._task = self.window.after(1000, self.update_time)
 
@@ -123,10 +132,14 @@ class Timer:
             self.input_minutes += temp
             self.input_seconds -= 60 * temp
 
-        self.hours.set(self.input_hours)
-        self.minutes.set(self.input_minutes)
-        self.seconds.set(self.input_seconds)
+        if not self.resume:
+            self.memory_hours = self.input_hours
+            self.memory_minutes = self.input_minutes
+            self.memory_seconds = self.input_seconds
+
+        self.set_time(self.input_hours, self.input_minutes, self.input_seconds)
         self.timer_running = True
+        self.resume = True
         self._task = self.window.after(1000, self.update_time)
 
     def pause_timer(self):
@@ -143,13 +156,39 @@ class Timer:
         Resets the timer to the original user input values for
         hours, minutes, and seconds
         """
-        pass
+        self.resume = False
+        self.set_time(self.memory_hours, self.memory_minutes, self.memory_seconds)
+        self.pause_timer()
 
     def play_alarm(self):
         """
         Plays an alarm sound when called
         """
         pass
+
+    def set_time(self, in_hours, in_minutes, in_seconds):
+        """
+        Sets the time entry fields with the supplied hours, minutes, and seconds
+
+        :param in_hours: Number of hours to put on the timer
+        :param in_minutes: Number of minutes to put on the timer
+        :param in_seconds: Number of seconds to put on the clock
+        """
+        if in_hours < 10:
+            temp = "0"+str(in_hours)
+            self.hours.set(temp)
+        else:
+            self.hours.set(in_hours)
+        if in_minutes < 10:
+            temp = "0" + str(in_minutes)
+            self.minutes.set(temp)
+        else:
+            self.minutes.set(in_minutes)
+        if in_seconds < 10:
+            temp = "0" + str(in_seconds)
+            self.seconds.set(temp)
+        else:
+            self.seconds.set(in_seconds)
 
     def cancel_task(self):
         """
@@ -159,6 +198,12 @@ class Timer:
         if self._task is not None:
             self.window.after_cancel(self._task)
             self._task = None
+
+    def handle_data_entry(self):
+        """
+        Utility method to detect user data entry
+        """
+        self.resume = False
 
 
 def init():
