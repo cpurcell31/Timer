@@ -108,8 +108,6 @@ class Timer:
                     self.input_minutes -= 1
                     self.input_seconds = 59
 
-
-
                 self.set_time(self.input_hours, self.input_minutes, self.input_seconds)
                 self.window.update()
                 self._task = self.window.after(1000, self.update_time)
