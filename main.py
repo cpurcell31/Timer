@@ -1,11 +1,10 @@
 import tkinter as tk
 import math
 
-
 class Timer:
     def __init__(self):
         self.window = tk.Tk()
-
+        self.window.resizable(width=False, height=False)
         self.hours = tk.StringVar()
         self.minutes = tk.StringVar()
         self.seconds = tk.StringVar()
@@ -13,13 +12,31 @@ class Timer:
         self.input_hours = 0
         self.input_minutes = 0
         self.input_seconds = 0
+        self.memory_hours = 0
+        self.memory_minutes = 0
+        self.memory_seconds = 0
 
         self.timer_running = False
         self._task = None
 
-        self.timer_hours_entry = tk.Entry(master=self.window, textvariable=self.hours)
-        self.timer_minutes_entry = tk.Entry(master=self.window, textvariable=self.minutes)
-        self.timer_seconds_entry = tk.Entry(master=self.window, textvariable=self.seconds)
+        self.timer_hours_entry = tk.Entry(
+            master=self.window,
+            textvariable=self.hours,
+            width=2,
+            font="Helvetica 44 bold"
+        )
+        self.timer_minutes_entry = tk.Entry(
+            master=self.window,
+            textvariable=self.minutes,
+            width=2,
+            font="Helvetica 44 bold"
+        )
+        self.timer_seconds_entry = tk.Entry(
+            master=self.window,
+            textvariable=self.seconds,
+            width=2,
+            font="Helvetica 44 bold"
+        )
 
         self.hours.set("00")
         self.minutes.set("00")
@@ -28,23 +45,32 @@ class Timer:
         self.button_pause = tk.Button(
             master=self.window,
             text="Pause",
-            width=25,
-            height=5,
-            command=self.pause_timer
+            command=self.pause_timer,
+            height=2,
+            width=15
         )
 
         self.button_start = tk.Button(
             master=self.window,
             text="Start",
-            width=25,
-            height=5,
-            command=self.start_timer
+            command=self.start_timer,
+            height=2,
+            width=15
         )
 
-        self.timer_hours_entry.pack()
-        self.timer_minutes_entry.pack()
-        self.timer_seconds_entry.pack()
+        self.button_reset = tk.Button(
+            master=self.window,
+            text="Reset Timer",
+            command=self.reset_timer,
+            height=2,
+            width=15
+        )
+
+        self.timer_hours_entry.pack(side=tk.LEFT)
+        self.timer_minutes_entry.pack(side=tk.LEFT)
+        self.timer_seconds_entry.pack(side=tk.LEFT)
         self.button_start.pack()
+        self.button_reset.pack()
         self.button_pause.pack()
         self.window.mainloop()
 
@@ -55,6 +81,7 @@ class Timer:
         """
         if self.timer_running:
             self.input_seconds -= 1
+
             if self.input_hours <= 0 and self.input_minutes <= 0 and self.input_seconds <= 0:
                 self.hours.set("00")
                 self.minutes.set("00")
@@ -69,6 +96,7 @@ class Timer:
                 if self.input_minutes <= 0 < self.input_hours:
                     self.input_hours -= 1
                     self.input_minutes = 59
+
                 self.hours.set(self.input_hours)
                 self.minutes.set(self.input_minutes)
                 self.seconds.set(self.input_seconds)
@@ -85,6 +113,7 @@ class Timer:
             self.input_seconds = int(self.seconds.get())
         except:
             print("Invalid Input: Unable to Convert to INT")
+
         if self.input_minutes >= 60:
             temp = math.floor(self.input_minutes / 60)
             self.input_hours += temp
@@ -93,6 +122,7 @@ class Timer:
             temp = math.floor(self.input_seconds / 60)
             self.input_minutes += temp
             self.input_seconds -= 60 * temp
+
         self.hours.set(self.input_hours)
         self.minutes.set(self.input_minutes)
         self.seconds.set(self.input_seconds)
@@ -107,6 +137,19 @@ class Timer:
         """
         self.cancel_task()
         self.timer_running = False
+
+    def reset_timer(self):
+        """
+        Resets the timer to the original user input values for
+        hours, minutes, and seconds
+        """
+        pass
+
+    def play_alarm(self):
+        """
+        Plays an alarm sound when called
+        """
+        pass
 
     def cancel_task(self):
         """
