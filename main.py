@@ -1,5 +1,13 @@
+from playsound import playsound
 import tkinter as tk
 import math
+
+
+def play_alarm():
+    """
+    Plays an alarm sound when called
+    """
+    playsound('alarm-sfx.mp3')
 
 
 class Timer:
@@ -98,7 +106,7 @@ class Timer:
                 self.resume = False
 
                 self.window.update()
-                self.play_alarm()
+                play_alarm()
             else:
                 if self.input_minutes <= 0 < self.input_hours:
                     self.input_hours -= 1
@@ -159,12 +167,6 @@ class Timer:
         self.resume = False
         self.set_time(self.memory_hours, self.memory_minutes, self.memory_seconds)
         self.pause_timer()
-
-    def play_alarm(self):
-        """
-        Plays an alarm sound when called
-        """
-        pass
 
     def set_time(self, in_hours, in_minutes, in_seconds):
         """
